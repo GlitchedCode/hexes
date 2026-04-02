@@ -1,0 +1,32 @@
+# ── CMake build directories ───────────────────────────────────────────────────
+build/
+build-*/
+out/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# ── CPM download cache ────────────────────────────────────────────────────────
+.cpm-cache/
+
+# ── Compiled output ───────────────────────────────────────────────────────────
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+hexes_app
+example_basic
+
+# ── IDE and editor artifacts ──────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+compile_commands.json
