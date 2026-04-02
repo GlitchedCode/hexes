@@ -3,7 +3,7 @@
 // Controls:
 //   q / Ctrl-C  exit
 
-#include <hexes/hot_reloader.hpp>
+#include <hexes/fs/hot_reloader.hpp>
 #include <hexes/serialization.hpp>
 
 #include <sol/forward.hpp>

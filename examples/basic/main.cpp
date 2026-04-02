@@ -12,7 +12,7 @@
 // While the example is running, edit scripts/example.lua and save —
 // you'll see the new greet() output printed within ~250 ms.
 
-#include <hexes/hot_reloader.hpp>
+#include <hexes/fs/hot_reloader.hpp>
 #include <hexes/serialization.hpp>
 
 #include <sol/sol.hpp>

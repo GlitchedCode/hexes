@@ -46,12 +46,22 @@ CPMAddPackage(
 # Exports: sol2::sol2
 # Lua 5.5 is installed alongside 5.4 on this machine; pin 5.4 explicitly so
 # find_package(Lua) inside sol2 doesn't pick up the wrong version.
-set(LUA_INCLUDE_DIR "/usr/include/lua5.4" CACHE PATH     "Lua 5.4 include dir" FORCE)
-set(LUA_LIBRARIES   "/usr/lib/liblua5.4.so" CACHE FILEPATH "Lua 5.4 library"    FORCE)
-
-# sol2 is header-only and does not propagate Lua into its link interface, so
-# we resolve the library ourselves and link it directly to each consumer.
+# Pin Lua 5.4 before sol2's find_package(Lua) runs.
+# LUA_LIBRARY (singular) is the key that FindLua's find_library checks;
+# LUA_LIBRARIES (plural) is derived after the search.
+set(LUA_INCLUDE_DIR "/usr/include/lua5.4"   CACHE PATH     "Lua 5.4 include dir" FORCE)
+set(LUA_LIBRARY     "/usr/lib/liblua5.4.so" CACHE FILEPATH "Lua 5.4 library"     FORCE)
 find_package(Lua 5.4 EXACT REQUIRED)
+
+# sol2's CMakeLists creates a lualib imported target but never links it to
+# sol2::sol2, so the Lua include dir and library don't propagate automatically.
+# Create our own canonical Lua 5.4 imported target and link it through
+# hexes_lib PUBLIC so every consumer gets the right headers and library.
+add_library(lua54 SHARED IMPORTED GLOBAL)
+set_target_properties(lua54 PROPERTIES
+    IMPORTED_LOCATION     "/usr/lib/liblua5.4.so"
+    INTERFACE_INCLUDE_DIRECTORIES "/usr/include/lua5.4"
+)
 
 CPMAddPackage(
     NAME sol2
@@ -91,7 +101,7 @@ CPMAddPackage(
 )
 
 # ── Core library ───────────────────────────────────────────────────────────────
-file(GLOB HEXES_SOURCES "src/*.cpp")
+file(GLOB HEXES_SOURCES "src/**/*.cpp")
 add_library(hexes_lib ${HEXES_SOURCES})
 add_library(hexes::hexes ALIAS hexes_lib)
 
@@ -102,6 +112,7 @@ target_include_directories(hexes_lib PUBLIC
 
 target_link_libraries(hexes_lib PUBLIC
     sol2::sol2
+    lua54
     glaze::glaze
     yaml-cpp::yaml-cpp
 )
@@ -109,16 +120,11 @@ target_link_libraries(hexes_lib PUBLIC
 # ── TUI application ────────────────────────────────────────────────────────────
 add_executable(hexes_app app/main.cpp)
 
-# Prepend lua5.4 include dir as a plain -I so it beats the system /usr/include
-# where lua.h resolves to 5.5 on this machine.
-target_include_directories(hexes_app BEFORE PRIVATE /usr/include/lua5.4)
-
 target_link_libraries(hexes_app PRIVATE
     hexes::hexes
     ftxui::screen
     ftxui::dom
     ftxui::component
-    ${LUA_LIBRARIES}
 )
 
 add_custom_command(TARGET hexes_app POST_BUILD
@@ -130,8 +136,7 @@ add_custom_command(TARGET hexes_app POST_BUILD
 
 # ── Examples ───────────────────────────────────────────────────────────────────
 add_executable(example_basic examples/basic/main.cpp)
-target_include_directories(example_basic BEFORE PRIVATE /usr/include/lua5.4)
-target_link_libraries(example_basic PRIVATE hexes::hexes ${LUA_LIBRARIES})
+target_link_libraries(example_basic PRIVATE hexes::hexes)
 
 add_custom_command(TARGET example_basic POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
