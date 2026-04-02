@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.21)
 project(hexes VERSION 0.1.0 LANGUAGES CXX)
 
+# yaml-cpp's CMakeLists uses cmake_minimum_required < 3.5 which newer CMake
+# rejects without this. Set it before any CPMAddPackage calls.
+set(CMAKE_POLICY_VERSION_MINIMUM "3.5" CACHE STRING "" FORCE)
+
+# Export compile_commands.json for clangd (IDE/LSP support).
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
