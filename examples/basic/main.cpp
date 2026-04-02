@@ -12,7 +12,7 @@
 // While the example is running, edit scripts/example.lua and save —
 // you'll see the new greet() output printed within ~250 ms.
 
-#include <hexes/lua_hot_reloader.hpp>
+#include <hexes/hot_reloader.hpp>
 #include <hexes/serialization.hpp>
 
 #include <sol/sol.hpp>
@@ -104,7 +104,7 @@ int main() {
     std::puts("\n=== hot-reload (edit scripts/example.lua to trigger) ===");
     std::printf("Watching for changes for 10 seconds...\n\n");
 
-    hexes::LuaHotReloader reloader{script};
+    hexes::fs::HotReloader reloader{script};
 
     auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds{10};
 

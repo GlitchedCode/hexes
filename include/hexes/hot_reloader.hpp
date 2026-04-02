@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <thread>
 
-namespace hexes {
+namespace hexes::fs {
 
 // Watches a Lua script file for changes using a background polling thread.
 //
@@ -13,20 +13,20 @@ namespace hexes {
 // detected the internal flag is set atomically. Call poll_and_reset() from
 // the main thread (e.g. once per frame) to check and clear the flag, then
 // perform the actual Lua reload there.
-class LuaHotReloader {
+class HotReloader {
 public:
-    explicit LuaHotReloader(
+    explicit HotReloader(
         std::filesystem::path       script_path,
         std::chrono::milliseconds   poll_interval = std::chrono::milliseconds{250}
     );
 
-    ~LuaHotReloader();
+    ~HotReloader();
 
-    LuaHotReloader(const LuaHotReloader&)            = delete;
-    LuaHotReloader& operator=(const LuaHotReloader&) = delete;
+    HotReloader(const HotReloader&)            = delete;
+    HotReloader& operator=(const HotReloader&) = delete;
 
-    LuaHotReloader(LuaHotReloader&&)            = delete;
-    LuaHotReloader& operator=(LuaHotReloader&&) = delete;
+    HotReloader(HotReloader&&)            = delete;
+    HotReloader& operator=(HotReloader&&) = delete;
 
     // Returns true and atomically resets the flag if a reload is pending.
     // Must be called from the same thread that owns the sol::state.

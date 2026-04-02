@@ -91,10 +91,8 @@ CPMAddPackage(
 )
 
 # ── Core library ───────────────────────────────────────────────────────────────
-add_library(hexes_lib
-    src/lua_hot_reloader.cpp
-    src/serialization.cpp
-)
+file(GLOB HEXES_SOURCES "src/*.cpp")
+add_library(hexes_lib ${HEXES_SOURCES})
 add_library(hexes::hexes ALIAS hexes_lib)
 
 target_include_directories(hexes_lib PUBLIC

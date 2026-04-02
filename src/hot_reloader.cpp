@@ -1,8 +1,8 @@
-#include <hexes/lua_hot_reloader.hpp>
+#include <hexes/hot_reloader.hpp>
 
-namespace hexes {
+namespace hexes::fs {
 
-LuaHotReloader::LuaHotReloader(
+HotReloader::HotReloader(
     std::filesystem::path     script_path,
     std::chrono::milliseconds poll_interval
 )
@@ -35,18 +35,18 @@ LuaHotReloader::LuaHotReloader(
     });
 }
 
-LuaHotReloader::~LuaHotReloader() {
+HotReloader::~HotReloader() {
     running_.store(false, std::memory_order_relaxed);
     if (watcher_thread_.joinable()) {
         watcher_thread_.join();
     }
 }
 
-bool LuaHotReloader::poll_and_reset() noexcept {
+bool HotReloader::poll_and_reset() noexcept {
     return reload_requested_.exchange(false, std::memory_order_acq_rel);
 }
 
-const std::filesystem::path& LuaHotReloader::path() const noexcept {
+const std::filesystem::path& HotReloader::path() const noexcept {
     return script_path_;
 }
 

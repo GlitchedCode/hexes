@@ -3,9 +3,10 @@
 // Controls:
 //   q / Ctrl-C  exit
 
-#include <hexes/lua_hot_reloader.hpp>
+#include <hexes/hot_reloader.hpp>
 #include <hexes/serialization.hpp>
 
+#include <sol/forward.hpp>
 #include <sol/sol.hpp>
 
 #include <ftxui/component/component.hpp>
@@ -43,7 +44,7 @@ static std::string load_example(sol::state& lua, const std::filesystem::path& pa
     sol::table loaded = lua["package"]["loaded"];
     loaded["example"] = sol::lua_nil;
 
-    auto mod = lua.require_file("example", path.string());
+    sol::object mod = lua.require_file("example", path.string());
     if (!mod.valid()) return "(load error)";
 
     sol::table t = mod;
@@ -75,7 +76,7 @@ int main() {
         : "(script not found)";
 
     // ── Hot-reload watcher ────────────────────────────────────────────────────
-    hexes::LuaHotReloader reloader{script};
+    hexes::fs::HotReloader reloader{script};
 
     // ── FTXUI interactive screen ──────────────────────────────────────────────
     using namespace ftxui;
