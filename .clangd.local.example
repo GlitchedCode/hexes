@@ -1,0 +1,13 @@
+# .clangd.local.example — per-machine clangd overrides
+#
+# Copy this file to ~/.config/clangd/config.yaml and customize for your system.
+# This allows machine-specific settings without modifying the committed .clangd.
+#
+# Example: Add GCC intrinsic headers for Nix-based clangd installations:
+
+CompileFlags:
+  Add: [-isystem, /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include]
+
+# To find your GCC include path, run:
+#   g++ -print-file-name=include
+
