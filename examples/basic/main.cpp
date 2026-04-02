@@ -103,7 +103,7 @@ int main() {
   std::printf("Watching for changes for 10 seconds...\n\n");
 
   hexes::fs::FileWatcher::instance().initialize_watchers();
-  hexes::fs::HotReloader reloader =
+  auto reloader =
       hexes::fs::FileWatcher::instance().watch_file(script);
 
   auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds{10};
@@ -111,7 +111,7 @@ int main() {
   while (std::chrono::steady_clock::now() < deadline) {
     std::this_thread::sleep_for(std::chrono::milliseconds{100});
 
-    if (reloader.poll_and_reset()) {
+    if (reloader->poll_and_reset()) {
       std::puts("[hot-reload] change detected — reloading script...");
 
       // Clear the cached module so require re-executes the file.

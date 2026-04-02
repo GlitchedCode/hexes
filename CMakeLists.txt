@@ -100,8 +100,25 @@ CPMAddPackage(
         "YAML_CPP_INSTALL OFF"
 )
 
+# ── spdlog ─────────────────────────────────────────────────────────────────────
+# Fast C++ logging library.
+# Exports: spdlog::spdlog
+CPMAddPackage(
+    NAME spdlog
+    GITHUB_REPOSITORY gabime/spdlog
+    VERSION 1.14.1
+    OPTIONS
+        "SPDLOG_BUILD_SHARED OFF"
+        "SPDLOG_BUILD_EXAMPLE OFF"
+        "SPDLOG_BUILD_TESTS OFF"
+)
+
 # ── Core library ───────────────────────────────────────────────────────────────
-file(GLOB HEXES_SOURCES "src/**/*.cpp")
+file(GLOB_RECURSE HEXES_SOURCES
+    "src/*.cpp"
+    "src/**/*.cpp"
+)
+message(STATUS "HEXES_SOURCES: ${HEXES_SOURCES}")
 add_library(hexes_lib ${HEXES_SOURCES})
 add_library(hexes::hexes ALIAS hexes_lib)
 
@@ -115,6 +132,7 @@ target_link_libraries(hexes_lib PUBLIC
     lua54
     glaze::glaze
     yaml-cpp::yaml-cpp
+    spdlog::spdlog
 )
 
 # ── TUI application ────────────────────────────────────────────────────────────

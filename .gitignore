@@ -32,3 +32,6 @@ example_basic
 .DS_Store
 compile_commands.json
 .clangd.local
+
+# ── Log files ──────────────────────────────────────────────────────────────────
+*.log

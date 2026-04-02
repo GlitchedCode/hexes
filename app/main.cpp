@@ -4,6 +4,7 @@
 //   q / Ctrl-C  exit
 
 #include <hexes/fs/hot_reloader.hpp>
+#include <hexes/logger.hpp>
 #include <hexes/serialization.hpp>
 
 #include <sol/forward.hpp>
@@ -64,6 +65,10 @@ static std::string load_example(sol::state &lua,
 // ──────────────────────────────────────────────────────────────────────
 
 int main() {
+  // ── Initialize logger ─────────────────────────────────────────────────────
+  auto &logger = hexes::Logger::instance();
+  logger.info("Application started");
+
   // ── Config JSON round-trip ────────────────────────────────────────────────
   AppConfig cfg;
   auto json = hexes::to_json(cfg).value_or("{}");
@@ -102,7 +107,7 @@ int main() {
   auto renderer = Renderer([&]() -> Element {
     // Service hot-reload on the FTXUI (main) thread — sol::state is not
     // thread-safe.
-    if (reloader.poll_and_reset()) {
+    if (reloader->poll_and_reset()) {
       lua_output = load_example(lua, script);
     }
 
@@ -112,7 +117,7 @@ int main() {
         hbox({text("config JSON : "), text(json) | color(Color::Green)}),
         hbox({text("lua output  : "), text(lua_output) | color(Color::Yellow)}),
         hbox({text("hot-reload  : "),
-              text("watching " + reloader.path().string()) |
+              text("watching " + reloader->path().string()) |
                   color(Color::Blue)}),
         separator(),
         text("press q to quit") | color(Color::GrayDark) | hcenter,

@@ -13,7 +13,7 @@ class HotReloader;
 using ReloadCallback = std::function<void(HotReloader &hr)>;
 
 // Watches a file for changes using a background polling thread.
-class HotReloader {
+class HotReloader : public std::enable_shared_from_this<HotReloader> {
   friend class FileWatcher;
   explicit HotReloader(std::filesystem::path script_path,
                        ReloadCallback reload_callback = {});
@@ -33,6 +33,8 @@ public:
 
   [[nodiscard]] const std::filesystem::path &path() const noexcept;
 
+  void register_with_watcher();
+
 private:
   std::filesystem::path script_path_;
   std::atomic<bool> reload_requested_{false};
@@ -50,8 +52,8 @@ public:
   FileWatcher(const FileWatcher &) = delete;
   FileWatcher &operator=(const FileWatcher &) = delete;
 
-  HotReloader watch_file(const std::filesystem::path &path,
-                         ReloadCallback reload_callback = {});
+  std::shared_ptr<HotReloader> watch_file(const std::filesystem::path &path,
+                                          ReloadCallback reload_callback = {});
   void initialize_watchers();
 
 private:
