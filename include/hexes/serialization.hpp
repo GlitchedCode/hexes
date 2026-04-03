@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glaze/beve/read.hpp>
+#include <glaze/beve/write.hpp>
 #include <glaze/glaze.hpp>
 #include <yaml-cpp/yaml.h>
 
@@ -39,13 +41,13 @@ template<class T>
 template<class T>
 [[nodiscard]] std::optional<std::vector<std::byte>> to_binary(const T& value) {
     std::vector<std::byte> out;
-    if (auto ec = glz::write_binary(value, out); ec) return std::nullopt;
+    if (auto ec = glz::write_beve(value, out); ec) return std::nullopt;
     return out;
 }
 
 template<class T>
 [[nodiscard]] bool from_binary(T& value, const std::vector<std::byte>& input) {
-    return !glz::read_binary(value, input);
+    return !glz::read_beve(value, input);
 }
 
 // ── YAML ──────────────────────────────────────────────────────────────────────

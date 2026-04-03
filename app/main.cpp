@@ -6,6 +6,7 @@
 #include <hexes/fs/hot_reloader.hpp>
 #include <hexes/logger.hpp>
 #include <hexes/serialization.hpp>
+#include <hexes/lua/globals.hpp>
 
 #include <sol/forward.hpp>
 #include <sol/sol.hpp>
@@ -74,7 +75,7 @@ int main() {
   auto json = hexes::to_json(cfg).value_or("{}");
 
   // ── Lua state ─────────────────────────────────────────────────────────────
-  sol::state lua;
+  auto& lua = hexes::lua::Globals::lua();
   lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::string);
 
   const std::filesystem::path script = "scripts/example.lua";

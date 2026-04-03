@@ -9,7 +9,9 @@ int test_call() {
 
 namespace hexes::lua {
 
-Globals::Globals(sol::state& lua) : lua_(lua) {
+Globals::Globals() {
+
+  lua_.open_libraries(sol::lib::base, sol::lib::package, sol::lib::string);
   // Expose a global `config` table to Lua, which is read-only and reflects
   // the current AppConfig values. This is just an example; in a real app you
   // might want to support writing to the config from Lua, or have multiple
@@ -31,4 +33,11 @@ void Globals::configure_lua_module(sol::object& module) {
   sol::table t = module;
   t["test_call"] = &test_call;
 }
+
+
+Globals& Globals::instance() {
+  static Globals instance;
+  return instance;
+}
+
 }

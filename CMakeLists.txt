@@ -8,7 +8,7 @@ set(CMAKE_POLICY_VERSION_MINIMUM "3.5" CACHE STRING "" FORCE)
 # Export compile_commands.json for clangd (IDE/LSP support).
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -75,13 +75,12 @@ CPMAddPackage(
         "SOL2_BUILD_LUA OFF"
 )
 
-# ── glaze v2.9.5 ──────────────────────────────────────────────────────────────
-# Last release that requires C++20. v3.0+ requires C++23.
+# ── glaze ─────────────────────────────────────────────────────────────────────
 # Exports: glaze::glaze (header-only)
 CPMAddPackage(
     NAME glaze
     GITHUB_REPOSITORY stephenberry/glaze
-    VERSION 2.9.5
+    VERSION 7.2.3
     OPTIONS
         "glaze_DEVELOPER_MODE OFF"
 )

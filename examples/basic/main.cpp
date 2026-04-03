@@ -14,6 +14,7 @@
 
 #include <hexes/fs/hot_reloader.hpp>
 #include <hexes/serialization.hpp>
+#include <hexes/transform2d.hpp>
 
 #include <sol/sol.hpp>
 
@@ -79,6 +80,35 @@ int main() {
   // Binary
   auto bin = hexes::to_binary(cfg);
   std::printf("binary: %zu bytes\n\n", bin ? bin->size() : 0u);
+
+  // ── Transform2D demo ──────────────────────────────────────────────────────
+  std::puts("=== hexes Transform2D ===");
+
+  hexes::Transform2D t;
+  t.position = {3.f, 4.f};
+  t.rotation = 3.14159f / 4.f; // 45°
+  t.scale    = {2.f, 2.f};
+
+  auto t_json = hexes::to_json(t);
+  std::printf("JSON  : %s\n", t_json.value_or("(error)").c_str());
+
+  // Round-trip through YAML
+  auto t_yaml = hexes::to_yaml(t);
+  std::printf("YAML  :\n%s\n", t_yaml.value_or("(error)").c_str());
+
+  hexes::Transform2D t2;
+  if (t_yaml) { [[maybe_unused]] bool ok = hexes::from_yaml(t2, *t_yaml); }
+  std::printf("  round-trip position: (%.2f, %.2f)\n\n", t2.position.x, t2.position.y);
+
+  // Apply and compose
+  hexes::Vec2 p = t.apply({1.f, 0.f});
+  std::printf("  apply({1,0}): (%.4f, %.4f)\n", p.x, p.y);
+
+  hexes::Transform2D child;
+  child.position = {1.f, 0.f};
+  child.rotation = 3.14159f / 4.f;
+  hexes::Transform2D world = t.compose(child);
+  std::printf("  compose position: (%.4f, %.4f)\n\n", world.position.x, world.position.y);
 
   // ── Lua scripting demo ────────────────────────────────────────────────────
   std::puts("=== hexes lua scripting ===");
